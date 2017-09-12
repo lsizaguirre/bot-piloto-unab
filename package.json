@@ -1,0 +1,27 @@
+{
+  "name": "bot-piloto-unab",
+  "version": "1.0.0",
+  "description": "Bot piloto para la Universidad Andrés Bello",
+  "main": "messages/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node messages/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lsizaguirre/bot-piloto-unab.git"
+  },
+  "author": "lsizaguirre@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lsizaguirre/bot-piloto-unab/issues"
+  },
+  "homepage": "https://github.com/lsizaguirre/bot-piloto-unab#readme",
+  "dependencies": {
+    "api-ai-recognizer": "^1.1.1",
+    "botbuilder": "^3.8.1",
+    "botbuilder-azure": "3.0.2",
+    "dotenv": "^4.0.0",
+    "restify": "^5.2.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "bot-client-location",
+  "version": "1.0.1",
+  "description": "Libreria para comunicación con el servicio de locaciones",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {},
+  "author": "lsizaguirre@gmail.com",
+  "license": "MIT",
+  "bugs": {},
+  "homepage": "",
+  "dependencies": {
+    "request": "^2.81.0"
+  }
+}
