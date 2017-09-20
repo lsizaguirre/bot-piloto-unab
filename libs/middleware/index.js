@@ -8,9 +8,12 @@ var mongoose = require('mongoose'),
     InMessageModel = mongoose.model('in_message', InMessageSchema),
     ObjectID = mongoose.Types.ObjectId;
 
+// Environment variables load 
+require('dotenv').config();
+
 // Mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://digebot-user:nr6Y2tAHRpxo0csF@digebot-cluster-shard-00-00-sexkt.mongodb.net:27017/DigebotDB,digebot-cluster-shard-00-01-sexkt.mongodb.net:27017/DigebotDB,digebot-cluster-shard-00-02-sexkt.mongodb.net:27017/DigebotDB?ssl=true&replicaSet=digebot-cluster-shard-0&authSource=admin'); 
+mongoose.connect(process.env.MONGO_CONNECTION_STRING); 
 
 // Function to Incoming Messages
 exports.LogIncomingMessage = (session, next) => {
