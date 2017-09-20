@@ -21,6 +21,7 @@
     "api-ai-recognizer": "^1.1.1",
     "botbuilder": "^3.8.1",
     "botbuilder-azure": "3.0.2",
+    "botbuilder-location": "^2.0.0",
     "dotenv": "^4.0.0",
     "mongoose": "4.10.8",
     "request": "^2.81.0",

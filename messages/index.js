@@ -5,7 +5,8 @@ var apiairecognizer     = require('api-ai-recognizer'),
     builder             = require("botbuilder"),
     botbuilder_azure    = require("botbuilder-azure"),
     path                = require('path'),
-    util                = require('util');
+    util                = require('util'),
+    locationDialog      = require('botbuilder-location');
 
 // Internal packages declaration
 var middleware          = require('../libs/middleware'),
@@ -28,6 +29,8 @@ var bot = new builder.UniversalBot(connector);
 
 bot.localePath(path.join(__dirname, './locale'));
 
+bot.library(locationDialog.createLibrary(process.env.BING_MAPS_API_KEY));
+
 bot.dialog('/Cancelar', [
     function (session) {
         session.endDialog('Cancelado el dialogo');
@@ -37,11 +40,41 @@ bot.dialog('/Cancelar', [
 var recognizer = new apiairecognizer(process.env['ApiAiToken']); 
 var intents = new builder.IntentDialog({ recognizers: [recognizer] } )
 .onDefault((session, args) => {
-    var name = session.message.user ? session.message.user.name : null;
-    session.send(name + ' ' + args.entities[0].entity);
+    //console.log(JSON.stringify(args, null, 2));
+    switch (args.intent) {
+        case 'poi-near':
+            session.beginDialog('/preguntarLugar');
+            break;
+        default:
+            var name = session.message.user ? session.message.user.name : null;
+            session.send(name + ' ' + args.entities[0].entity);
+            break;
+    }
 });
 
-bot.dialog('/', intents);    
+bot.dialog('/', intents);  
+
+bot.dialog('/preguntarLugar', [
+    function(session) {
+        var options = {
+            prompt: "Enviame tu ubicación pra consultar por la localidad más cercana a ti.",
+            useNativeControl: true
+        };
+        locationDialog.getLocation(session, options);
+    },
+    function (session, results) {
+        if (results.response) {
+            var place = results.response;
+            //session.send(place.streetAddress + ", " + place.locality + ", " + place.region + ", " + place.country + " (" + place.postalCode + ")");
+            console.log(JSON.stringify(results.response, null, 2));
+            session.endDialog();
+        }
+        else {
+            session.send("Lo siento, no pude determinar tu ubicación.");
+            session.endDialog();
+        }
+    }
+])
 
 // Set the Incoming and Outgoing functions for the middleware
 bot.use({
