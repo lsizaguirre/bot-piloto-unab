@@ -118,7 +118,7 @@ var LocationsToHeroCards = (locations, builder, session) => {
 			builder.CardImage.create(session, `https://maps.googleapis.com/maps/api/staticmap?center=${location.geo.coordinates[0]},${location.geo.coordinates[1]}&zoom=13&scale=1&size=400x400&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C${location.geo.coordinates[0]},${location.geo.coordinates[1]}`)
 		])
 		.buttons([
-			builder.CardAction.openUrl(session, 'https://docs.botframework.com/en-us/', 'Visitar')
+			builder.CardAction.openUrl(session, `https://www.google.cl/maps/@${location.geo.coordinates[0]},${location.geo.coordinates[1]},15z`, 'Abrir Mapa')
 		]);
 		cards.push(card);
 	});
