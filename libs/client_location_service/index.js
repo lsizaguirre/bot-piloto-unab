@@ -6,7 +6,7 @@ TO DO:
 
 const request = require('request');
 
-exports.AllLocations = botid => {
+exports.AllLocations = (bot_id, type_location) => {
 
 	let options = {  
 		url: process.env.LOC_HOST,
@@ -16,13 +16,14 @@ exports.AllLocations = botid => {
 			'Accept-Charset': 'utf-8'
 		},
 		qs : {
-			botid: botid
+			bot: bot_id,
+			type: type_location
 		}
 	};
 	return MakeCall(options);
 }
 
-exports.NearLocations = (botid, longitude, latitude, distance = 5000) => {
+exports.NearLocations = (bot_id, type_location, latitude, longitude, distance = 5000) => {
 
 	let options = {  
 		url: process.env.LOC_HOST + '/near',
@@ -32,16 +33,18 @@ exports.NearLocations = (botid, longitude, latitude, distance = 5000) => {
 			'Accept-Charset': 'utf-8'
 		},
 		qs : {
-			botid: botid,
-			longitude: longitude,
+			bot: bot_id,
+			type: type_location,
 			latitude: latitude,
+			longitude: longitude,
 			distance: distance
 		}
 	};
+	console.log(options);
 	return MakeCall(options);
 }
 
-exports.SearchLocations = (botid, q) => {
+exports.SearchLocations = (bot_id, type_location, q) => {
 
 	let options = {  
 		url: process.env.LOC_HOST + '/search',
@@ -51,7 +54,8 @@ exports.SearchLocations = (botid, q) => {
 			'Accept-Charset': 'utf-8'
 		},
 		qs : {
-			botid: botid,
+			bot: bot_id,
+			type: type_location,
 			q: q
 		}
 	};
