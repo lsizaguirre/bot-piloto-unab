@@ -13,7 +13,7 @@ require('dotenv').config();
 function getUseEmulator() {
     return (process.env.NODE_ENV == 'development');
 }
-
+/*
 const buildConnector = useEmulator => {
     let connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
         appId: process.env['MicrosoftAppId'],
@@ -46,10 +46,10 @@ const startServer = (useEmulator, connector) => {
         module.exports = { default: connector.listen() }
     }
 }
-
+*/
 module.exports = {
-    getUseEmulator: getUseEmulator,
-    buildConnector: buildConnector,
-    buildBot: buildBot,
-    startServer: startServer
+    getUseEmulator: getUseEmulator
+    //, buildConnector: buildConnector
+    //, buildBot: buildBot
+    //, startServer: startServer
 };
