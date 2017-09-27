@@ -1,13 +1,13 @@
 'use strict';
 
-const mongoose = require('mongoose'),
-      Schema = mongoose.Schema,
-      ObjectID = mongoose.Types.ObjectId,
-      InMessageSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false }),
-      OutMessageSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false }),
-      InMessageModel = mongoose.model('in_message', InMessageSchema),
-      OutMessageModel = mongoose.model('out_message', OutMessageSchema);
-      
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    OutMessageSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false }),
+    OutMessageModel = mongoose.model('out_message', OutMessageSchema),
+    InMessageSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false }),
+    InMessageModel = mongoose.model('in_message', InMessageSchema),
+    ObjectID = mongoose.Types.ObjectId;
+
 // Environment variables load 
 require('dotenv').config();
 
@@ -16,7 +16,7 @@ mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGO_CONNECTION_STRING); 
 
 // Function to Incoming Messages
-const logIncomingMessage = (session, next) => {
+exports.LogIncomingMessage = (session, next) => {
     try {
         session.message.bot_id = new ObjectID(process.env.BOT_ID);
         new InMessageModel(session.message).save();
@@ -27,7 +27,7 @@ const logIncomingMessage = (session, next) => {
 }
 
 // Function to Outgoing Messages
-const logOutgoingMessage = (event, next) => {
+exports.LogOutgoingMessage = (event, next) => {
     try {
         event.bot_id = new ObjectID(process.env.BOT_ID);
         new OutMessageModel(event).save();
@@ -36,15 +36,3 @@ const logOutgoingMessage = (event, next) => {
         console.log(error)
     }
 }
-
-const initMiddleware = (bot) => {
-    // Set the Incoming and Outgoing functions for the middleware
-    bot.use({
-        botbuilder: logIncomingMessage,
-        send: logOutgoingMessage
-    });
-
-    
-}
-
-module.exports = { initMiddleware: initMiddleware }
