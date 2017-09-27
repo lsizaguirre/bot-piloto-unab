@@ -1,6 +1,6 @@
 "use strict";
 
-//debug 8
+//debug 9
 
 // External packages declaration
 var apiairecognizer     = require('api-ai-recognizer'),
@@ -13,7 +13,7 @@ var apiairecognizer     = require('api-ai-recognizer'),
 // Internal packages declaration
 var middleware          = require('../libs/middleware')
     , poi                 = require('../libs/client_location_service')
-    ;//, utils               = require('../libs/bot-utils');
+    , utils               = require('../libs/bot-utils');
 
 // Environment variables load 
 require('dotenv').config();
