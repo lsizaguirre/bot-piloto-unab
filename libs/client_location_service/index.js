@@ -1,7 +1,3 @@
-/*
-TO DO:
-- Validar que ocurre cuando process.env.LOC_HOST es undefined
- */
 'use strict';
 
 const request = require('request');

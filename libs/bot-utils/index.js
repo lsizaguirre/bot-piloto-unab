@@ -10,7 +10,7 @@ const builder             = require("botbuilder"),
 // Environment variables load 
 require('dotenv').config();
 
-function getUseEmulator() {
+const getUseEmulator = () => {
     return (process.env.BotEnv == 'development');
 }
 
@@ -48,8 +48,8 @@ const startServer = (useEmulator, connector) => {
 }
 
 module.exports = {
-    getUseEmulator: getUseEmulator
-    , buildConnector: buildConnector
-    , buildBot: buildBot
-    , startServer: startServer
+    getUseEmulator: getUseEmulator,
+    buildConnector: buildConnector,
+    buildBot: buildBot,
+    startServer: startServer
 };
