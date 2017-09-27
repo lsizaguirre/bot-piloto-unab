@@ -16,14 +16,8 @@ var middleware          = require('../libs/middleware'),
 require('dotenv').config();
 
 // Define if we are going to use emulator in local environment
-var useEmulator = botUtils.getUseEmulator();
-
-var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
-    appId: process.env['MicrosoftAppId'],
-    appPassword: process.env['MicrosoftAppPassword'],
-    stateEndpoint: process.env['BotStateEndpoint'],
-    openIdMetadata: process.env['BotOpenIdMetadata']
-});
+const useEmulator = botUtils.getUseEmulator();
+const connector = botUtils.buildConnector(useEmulator);
 
 var bot = new builder.UniversalBot(connector);
 
