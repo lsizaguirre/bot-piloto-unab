@@ -8,8 +8,9 @@ const builder             = require("botbuilder"),
       dialogs             = require('../../messages/dialogs');
 
 // Environment variables load 
+require('dotenv').config();
 
-const getUseEmulator = () => {
+function getUseEmulator() {
     return (process.env.NODE_ENV == 'development');
 }
 
