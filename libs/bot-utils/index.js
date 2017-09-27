@@ -11,7 +11,8 @@ const builder             = require("botbuilder"),
 require('dotenv').config();
 
 function getUseEmulator() {
-    return (process.env.NODE_ENV == 'development');
+    return false;
+    //return (process.env.NODE_ENV == 'development');
 }
 /*
 const buildConnector = useEmulator => {
