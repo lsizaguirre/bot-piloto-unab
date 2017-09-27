@@ -10,13 +10,14 @@ var apiairecognizer     = require('api-ai-recognizer'),
 
 // Internal packages declaration
 var middleware          = require('../libs/middleware'),
-    poi                 = require('../libs/client_location_service');
+    poi                 = require('../libs/client_location_service'),
+    utils               = require('../bot-utils');
 
 // Environment variables load 
 require('dotenv').config();
 
 // Define if we are going to use emulator in local environment
-var useEmulator = (process.env.NODE_ENV == 'development');
+var useEmulator = utils.getUseEmulator();
 
 var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
     appId: process.env['MicrosoftAppId'],
