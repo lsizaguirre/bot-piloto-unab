@@ -7,9 +7,6 @@ const mongoose = require('mongoose'),
       OutMessageSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false }),
       InMessageModel = mongoose.model('in_message', InMessageSchema),
       OutMessageModel = mongoose.model('out_message', OutMessageSchema);
-      
-// Environment variables load 
-require('dotenv').config();
 
 // Mongoose instance connection url connection
 mongoose.Promise = global.Promise;

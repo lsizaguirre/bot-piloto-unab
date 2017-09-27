@@ -7,9 +7,6 @@ const builder             = require("botbuilder"),
       middleware          = require('../middleware'),
       dialogs             = require('../../messages/dialogs');
 
-// Environment variables load 
-require('dotenv').config();
-
 const getUseEmulator = () => {
     return (process.env.BotEnv == 'development');
 }
