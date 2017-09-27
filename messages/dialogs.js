@@ -5,6 +5,9 @@ const apiairecognizer     = require('api-ai-recognizer'),
       clientLocation      = require('../libs/client_location_service'),
       locationDialog      = require('botbuilder-location');
 
+// Environment variables load 
+require('dotenv').config();
+
 const setDialogs = (bot) => {
 
     var recognizer = new apiairecognizer(process.env['ApiAiToken']); 
