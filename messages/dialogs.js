@@ -3,10 +3,12 @@
 const apiairecognizer     = require('api-ai-recognizer'),
       builder             = require("botbuilder"),
       clientLocation      = require('../libs/client_location_service'),
-      locationDialog      = require('botbuilder-location');
+      locationDialog      = require('botbuilder-location'),
+      NodeCache           = require('node-cache');
 
 const setDialogs = (bot) => {
 
+    var cache = new NodeCache({ stdTTL: 0 })
     var recognizer = new apiairecognizer(process.env['ApiAiToken']); 
 
     bot.dialog('/', new builder.IntentDialog({ recognizers: [recognizer] } )
