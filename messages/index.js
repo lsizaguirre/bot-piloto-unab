@@ -20,7 +20,7 @@ const useEmulator = botUtils.getUseEmulator();
 const connector = botUtils.buildConnector(useEmulator);
 
 botUtils.buildBot(connector);
-botUtils.startServer(useEmulator, connector);
+//botUtils.startServer(useEmulator, connector);
 
 
 /*
@@ -50,16 +50,11 @@ bot.use({
 });
 */
 // Create the listening
-/*
+
 if (useEmulator) {
-    var restify = require('restify');
-    var server = restify.createServer();
-    server.listen(3978, function() {
-        console.log('test bot endpoint at http://localhost:3978/api/messages');
-    });
-    server.post('/api/messages', connector.listen());    
+    botUtils.startLocalServer(connector); 
 } else {
     module.exports = { default: connector.listen() }
 }
-*/
+
 

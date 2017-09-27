@@ -33,23 +33,19 @@ const buildBot = connector => {
     return bot;
 }
 
-const startServer = (useEmulator, connector) => {
+const startLocalServer = connector => {
     // Create the listening
-    if (useEmulator) {
-        var restify = require('restify');
-        var server = restify.createServer();
-        server.listen(3978, function() {
-            console.log('test bot endpoint at http://localhost:3978/api/messages');
-        });
-        server.post('/api/messages', connector.listen());    
-    } else {
-        module.exports = { default: connector.listen() }
-    }
+    var restify = require('restify');
+    var server = restify.createServer();
+    server.listen(3978, function() {
+        console.log('test bot endpoint at http://localhost:3978/api/messages');
+    });
+    server.post('/api/messages', connector.listen());    
 }
 
 module.exports = {
     getUseEmulator: getUseEmulator,
     buildConnector: buildConnector,
     buildBot: buildBot,
-    startServer: startServer
+    startLocalServer: startLocalServer
 };
