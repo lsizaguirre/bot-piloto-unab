@@ -3,9 +3,10 @@
 const mongoose = require('mongoose'),
       Schema = mongoose.Schema,
       ObjectID = mongoose.Types.ObjectId,
+      InMessageSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false }),
+      OutMessageSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false }),
       InMessageModel = mongoose.model('in_message', InMessageSchema),
-      OutMessageModel = mongoose.model('out_message', OutMessageSchema),
-      InMessageSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false });
+      OutMessageModel = mongoose.model('out_message', OutMessageSchema);
       
 // Environment variables load 
 require('dotenv').config();
