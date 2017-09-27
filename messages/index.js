@@ -19,6 +19,11 @@ require('dotenv').config();
 const useEmulator = botUtils.getUseEmulator();
 const connector = botUtils.buildConnector(useEmulator);
 
+botUtils.buildBot(connector);
+//botUtils.startServer(useEmulator, connector);
+
+
+/*
 var bot = new builder.UniversalBot(connector);
 
 bot.localePath(path.join(__dirname, './locale'));
@@ -43,7 +48,7 @@ bot.use({
     botbuilder: middleware.LogIncomingMessage,
     send: middleware.LogOutgoingMessage
 });
-
+*/
 // Create the listening
 if (useEmulator) {
     var restify = require('restify');
