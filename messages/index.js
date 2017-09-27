@@ -20,7 +20,7 @@ const useEmulator = botUtils.getUseEmulator();
 const connector = botUtils.buildConnector(useEmulator);
 
 botUtils.buildBot(connector);
-//botUtils.startServer(useEmulator, connector);
+botUtils.startServer(useEmulator, connector);
 
 
 /*
@@ -50,6 +50,7 @@ bot.use({
 });
 */
 // Create the listening
+/*
 if (useEmulator) {
     var restify = require('restify');
     var server = restify.createServer();
@@ -60,5 +61,5 @@ if (useEmulator) {
 } else {
     module.exports = { default: connector.listen() }
 }
-
+*/
 
