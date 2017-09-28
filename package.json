@@ -22,6 +22,7 @@
     "botbuilder": "^3.8.1",
     "botbuilder-azure": "3.0.2",
     "botbuilder-location": "^2.0.0",
+    "botbuilder-quickreplies": "^1.1.1",
     "dashbot": "^9.2.0",
     "dotenv": "^4.0.0",
     "mongoose": "4.10.8",

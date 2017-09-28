@@ -8,6 +8,7 @@ const builder          = require("botbuilder"),
 	  botbuilder_azure = require("botbuilder-azure"),
 	  path             = require('path'),
 	  util             = require('util');
+	  //quickReplies = require('botbuilder-quickreplies');
 
 // Internal packages declaration
 const middleware       = require('../libs/middleware'),
@@ -21,6 +22,7 @@ const useEmulator     = botUtils.getUseEmulator(),
 	  bot             = botUtils.buildBot(connector);
 
 dashbotWrapper.setDashbot(bot);
+//bot.use(quickReplies.QuickRepliesMiddleware);
 
 if (useEmulator)
 	botUtils.startLocalServer(connector);

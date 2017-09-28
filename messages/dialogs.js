@@ -12,8 +12,14 @@ const zeroStep = (session, args, next) => {
     var facebook = builder.EntityRecognizer.findAllEntities(args.entities, 'facebook');
     if (facebook.length == 0)
         next(session, args, secondStep);
-    else
-        session.send(JSON.stringify(args, null, 2));
+    else {
+        session.send(JSON.stringify(facebook, null, 2));
+        facebook.forEach(function(element) {
+            if(element.entity.type == 2) {
+                builder.Prompts.choice(session, '¿Cuál prefieres?', 'Mar|Montaña');
+            }            
+        });
+    }
 }
 
 const firstStep = (session, args, next) => {
