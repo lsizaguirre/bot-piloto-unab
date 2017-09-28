@@ -1,12 +1,19 @@
 'use strict';
 
-const apiairecognizer     = require('api-ai-recognizer'),
+const apiairecognizer     = require('../libs/api-ai-recognizer'),
       builder             = require("botbuilder"),
       clientLocation      = require('../libs/client_location_service'),
       locationDialog      = require('botbuilder-location'),
       NodeCache           = require('node-cache');
 
 const cache = new NodeCache({ stdTTL: process.env.TTL })
+
+const zeroStep = (session, args, next) => {
+
+    session.send(JSON.stringify(args, null, 2));
+    //console.log(args);
+    //next(session, args, secondStep);
+}
 
 const firstStep = (session, args, next) => {
 
@@ -40,7 +47,7 @@ const getDefaultIntent = () => {
     var recognizer = new apiairecognizer(process.env['ApiAiToken']); 
     return new builder.IntentDialog({ recognizers: [recognizer] } )
     .onDefault((session, args) => {
-        firstStep(session, args, secondStep);
+        zeroStep(session, args, firstStep);
     })
 }
 
