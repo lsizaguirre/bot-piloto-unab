@@ -55,6 +55,7 @@ exports.SearchLocations = (bot_id, type_location, q) => {
 			q: q
 		}
 	};
+	console.log(options);
 	return MakeCall(options);
 }
 

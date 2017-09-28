@@ -46,11 +46,27 @@ const secondStep = (session, args) => {
     switch (args.intent) {
         case 'poi-near':
             session.endDialog();
-            session.beginDialog('/preguntarLugar');
+            var locationEntity = builder.EntityRecognizer.findEntity(args.entities, 'location');
+            if(locationEntity) {
+                clientLocation.SearchLocations(process.env.BOT_ID, null, locationEntity.entity)
+                .then(
+                    function (value) {
+                        var tarjetas = LocationsToHeroCards(value, builder, session);
+                        var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
+                        session.send(msj);
+                    },
+                    function (reason) {
+                        console.error('Something went wrong', reason);
+                    }
+                );
+                session.endDialog();
+            } else {
+                session.beginDialog('/preguntarLugar');
+            }
             break;
         default:
-            var name = session.message.user ? session.message.user.name : null;
-            session.send(name + ' ' + args.entities[0].entity);
+            //var name = session.message.user ? session.message.user.name : null;
+            session.send(args.entities[0].entity);
             break;
     }
 }
