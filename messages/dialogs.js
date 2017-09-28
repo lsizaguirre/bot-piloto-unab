@@ -9,10 +9,11 @@ const apiairecognizer     = require('../libs/api-ai-recognizer'),
 const cache = new NodeCache({ stdTTL: process.env.TTL })
 
 const zeroStep = (session, args, next) => {
-
-    session.send(JSON.stringify(args, null, 2));
-    //console.log(args);
-    //next(session, args, secondStep);
+    var facebook = builder.EntityRecognizer.findAllEntities(args.entities, 'facebook');
+    if (facebook.length == 0)
+        next(session, args, secondStep);
+    else
+        session.send(JSON.stringify(args, null, 2));
 }
 
 const firstStep = (session, args, next) => {

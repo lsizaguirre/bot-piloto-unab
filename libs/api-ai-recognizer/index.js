@@ -82,13 +82,15 @@ ApiAiRecognizer.prototype.recognize = function (context, done) {
                     }
                 }
 
-                for (var message in result.fulfillment.messages) {
+                for (var index in result.fulfillment.messages) {
+                    let message = result.fulfillment.messages[index];
+                    let length = result.fulfillment.messages.length;
 
                     if (message.platform == 'facebook') {
                         let type = key;
                         let score = 1;
-                        let startIndex = context.message.text.indexOf(entity);
-                        let endIndex = startIndex + length - 1;
+                        let startIndex = -1;
+                        let endIndex = -1;
 
                         let entity_found = {
                             entity: message,
@@ -97,7 +99,6 @@ ApiAiRecognizer.prototype.recognize = function (context, done) {
                             endIndex: endIndex,
                             score: score
                         };
-
                         entities_found.push(entity_found);
                     }
                 }
