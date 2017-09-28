@@ -9,17 +9,20 @@ const apiairecognizer     = require('../libs/api-ai-recognizer'),
 const cache = new NodeCache({ stdTTL: process.env.TTL })
 
 const zeroStep = (session, args, next) => {
-    var facebook = builder.EntityRecognizer.findAllEntities(args.entities, 'facebook');
-    if (facebook.length == 0)
-        next(session, args, secondStep);
-    else {
-        session.send(JSON.stringify(facebook, null, 2));
-        facebook.forEach(function(element) {
-            if(element.entity.type == 2) {
-                builder.Prompts.choice(session, '¿Cuál prefieres?', 'Mar|Montaña');
-            }            
+    var facebookEntities = builder.EntityRecognizer.findAllEntities(args.entities, 'facebook');
+    if (facebookEntities.length != 0) {
+        facebookEntities.forEach(function(element) {
+            switch (element.entity.type) {
+                case 0:
+                    session.send(element.entity.speech);
+                    break;
+                case 2:
+                    builder.Prompts.choice(session, element.entity.title, element.entity.replies.join('|'));
+                    break;
+            }
         });
     }
+    next(session, args, secondStep);
 }
 
 const firstStep = (session, args, next) => {
@@ -41,6 +44,7 @@ const firstStep = (session, args, next) => {
 const secondStep = (session, args) => {
     switch (args.intent) {
         case 'poi-near':
+            session.endDialog();
             session.beginDialog('/preguntarLugar');
             break;
         default:
