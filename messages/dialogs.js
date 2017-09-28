@@ -6,25 +6,47 @@ const apiairecognizer     = require('api-ai-recognizer'),
       locationDialog      = require('botbuilder-location'),
       NodeCache           = require('node-cache');
 
+const cache = new NodeCache({ stdTTL: process.env.TTL })
+
+const firstStep = (session, args, next) => {
+
+    const channelId = session.message.address.channelId;
+    const userId = session.message.user.id;
+
+    if (channelId === 'directline' && userId === 'DashbotChannel') {
+        sendMessage(session);
+        next();
+    } else {
+        const cacheData = cache.get(userId) || { paused: false };
+        console.log(cacheData);
+        if (!cacheData.paused)
+            next(session, args);
+    }
+}
+
+const secondStep = (session, args) => {
+    switch (args.intent) {
+        case 'poi-near':
+            session.beginDialog('/preguntarLugar');
+            break;
+        default:
+            var name = session.message.user ? session.message.user.name : null;
+            session.send(name + ' ' + args.entities[0].entity);
+            break;
+    }
+}
+
+const getDefaultIntent = () => {
+    var recognizer = new apiairecognizer(process.env['ApiAiToken']); 
+    return new builder.IntentDialog({ recognizers: [recognizer] } )
+    .onDefault((session, args) => {
+        firstStep(session, args, secondStep);
+    })
+}
+
 const setDialogs = (bot) => {
 
-    var cache = new NodeCache({ stdTTL: 0 })
-    var recognizer = new apiairecognizer(process.env['ApiAiToken']); 
-
-    bot.dialog('/', new builder.IntentDialog({ recognizers: [recognizer] } )
-        .onDefault((session, args) => {
-            //console.log(JSON.stringify(args, null, 2));
-            switch (args.intent) {
-                case 'poi-near':
-                    session.beginDialog('/preguntarLugar');
-                    break;
-                default:
-                    var name = session.message.user ? session.message.user.name : null;
-                    session.send(name + ' ' + args.entities[0].entity);
-                    break;
-            }
-        })
-    );
+    bot.dialog('/', getDefaultIntent());
 
     bot.dialog('/preguntarLugar', [
         function(session) {
@@ -61,6 +83,41 @@ const setDialogs = (bot) => {
         }
     ]);
 }
+
+var sendMessage = (session) => {
+    const msg = JSON.parse(session.message.text);
+    const cacheData = cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
+
+    const lastState = cacheData.paused;
+    cacheData.paused = msg.paused;
+    module.exports.cache.set(msg.userId, cacheData);
+
+    let errorMsg = undefined;
+    const name = cacheData.name ? ` ${cacheData.name}` : '';
+    const text = getText(msg, name);
+
+    if (cacheData.address) {
+        if (!lastState && msg.paused && msg.text) {
+            const txt = `Hola${name}, a partir de este momento hablarás con una persona.`;
+            session.library.send(
+                new builder.Message().text(txt).address(cacheData.address),
+                () => session.library.send(new builder.Message().text(text).address(cacheData.address)));
+        } else {
+            session.library.send(new builder.Message().text(text).address(cacheData.address));
+        }
+    } else {
+        const topic = msg.text ? `el mensaje ${msg.text}` : `la desactivación/activación del bot`;
+        errorMsg = `Error: No se pudo enviar "${topic}" ` +
+            `al cliente "${msg.userId}" porque la dirección del mismo no aparece en la cache.`;
+        console.error(errorMsg);
+    }
+
+    session.send(errorMsg || (msg.text ? 'Mensaje enviado.' : 'Detención/Activación del bot.'));
+}
+
+const getText = (msg, name) => msg.text || (msg.paused ?
+    `Hola${name}, a partir de este momento hablarás con una persona.` :
+    `Hola${name}, a partir de este momento hablarás con la plataforma.`);
 
 var LocationsToHeroCards = (locations, builder, session) => {
 	var cards = [];
