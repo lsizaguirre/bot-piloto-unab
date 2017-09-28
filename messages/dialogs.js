@@ -22,7 +22,8 @@ const zeroStep = (session, args, next) => {
             }
         });
     }
-    next(session, args, secondStep);
+    else
+        next(session, args, secondStep);
 }
 
 const firstStep = (session, args, next) => {
