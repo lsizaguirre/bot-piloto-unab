@@ -31,7 +31,7 @@ const firstStep = (session, args, next) => {
     const channelId = session.message.address.channelId;
     const userId = session.message.user.id;
 
-    if (channelId === 'directline' && userId === 'DashbotChannel') {
+    if (channelId === 'directline' && userId === 'dashbot-direct-line') {
         sendMessage(session);
         next();
     } else {
