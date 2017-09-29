@@ -47,13 +47,21 @@ const secondStep = (session, args) => {
         case 'poi-near':
             session.endDialog();
             var locationEntity = builder.EntityRecognizer.findEntity(args.entities, 'location');
-            if(locationEntity) {
+            console.log('Entity: ' + locationEntity);
+            if(locationEntity && locationEntity.entity !== 'generic') {
                 clientLocation.SearchLocations(process.env.BOT_ID, null, locationEntity.entity)
                 .then(
                     function (value) {
-                        var tarjetas = LocationsToHeroCards(value, builder, session);
-                        var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
-                        session.send(msj);
+                        if(value) {
+                            if (!Array.isArray(value))
+                                value = [value];
+                            var tarjetas = LocationsToHeroCards(value, builder, session);
+                            var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
+                            session.send(msj);
+                        } else {
+                            session.send('No se encontraron registros');
+                        }
+                        
                     },
                     function (reason) {
                         console.error('Something went wrong', reason);
@@ -165,7 +173,7 @@ var LocationsToHeroCards = (locations, builder, session) => {
 			builder.CardImage.create(session, `https://maps.googleapis.com/maps/api/staticmap?center=${location.geo.coordinates[0]},${location.geo.coordinates[1]}&zoom=13&scale=1&size=400x400&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C${location.geo.coordinates[0]},${location.geo.coordinates[1]}`)
 		])
 		.buttons([
-			builder.CardAction.openUrl(session, `https://www.google.cl/maps/@${location.geo.coordinates[0]},${location.geo.coordinates[1]},15z`, 'Abrir Mapa')
+			builder.CardAction.openUrl(session, location.url_map, 'Abrir Mapa')
 		]);
 		cards.push(card);
 	});
