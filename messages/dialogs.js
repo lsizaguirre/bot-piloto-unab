@@ -1,17 +1,27 @@
 'use strict';
 
-const apiairecognizer     = require('../libs/api-ai-recognizer'),
-      builder             = require("botbuilder"),
-      clientLocation      = require('../libs/client_location_service'),
-      locationDialog      = require('botbuilder-location'),
-      NodeCache           = require('node-cache');
+const apiairecognizer = require('../libs/api-ai-recognizer'),
+    builder = require("botbuilder"),
+    clientLocation = require('../libs/client_location_service'),
+    locationDialog = require('botbuilder-location'),
+    NodeCache = require('node-cache');
 
 const cache = new NodeCache({ stdTTL: process.env.TTL })
+
+// Debo cambiarlo para que lo consulte en BD o env
+const getLocationType = type => {
+    switch (type) {
+        case 'facultades': return "59c2765a518a97998d3a6d84";
+        case 'sedes': return "59c27671518a97998d3a7bad";
+        case 'departamentos': return "59cdccd158a4d569e5120997";
+        default: return null;
+    }
+}
 
 const zeroStep = (session, args, next) => {
     var facebookEntities = builder.EntityRecognizer.findAllEntities(args.entities, 'facebook');
     if (facebookEntities.length != 0) {
-        facebookEntities.forEach(function(element) {
+        facebookEntities.forEach(function (element) {
             switch (element.entity.type) {
                 case 0:
                     session.send(element.entity.speech);
@@ -43,34 +53,58 @@ const firstStep = (session, args, next) => {
 }
 
 const secondStep = (session, args) => {
+
+    console.log('Intent: ' + args.intent);
+    var locationEntity = builder.EntityRecognizer.findEntity(args.entities, 'Locations');
+    if (locationEntity)
+        session.userData.locationType = getLocationType(locationEntity.entity);
+
     switch (args.intent) {
-        case 'poi-near':
-            session.endDialog();
-            var locationEntity = builder.EntityRecognizer.findEntity(args.entities, 'location');
-            console.log('Entity: ' + locationEntity);
-            if(locationEntity && locationEntity.entity !== 'generic') {
-                clientLocation.SearchLocations(process.env.BOT_ID, null, locationEntity.entity)
+        case 'locations-near':
+            session.beginDialog('/preguntarLugar');
+            break;
+
+        case 'locations-search':
+            clientLocation.SearchLocations(process.env.BOT_ID, null, locationEntity.entity)
+                .then(function (value) {
+                    if (value) {
+                        if (!Array.isArray(value))
+                            value = [value];
+                        var tarjetas = LocationsToHeroCards(value, builder, session);
+                        var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
+                        session.send(msj);
+                    } else {
+                        session.send('No se encontraron registros');
+                    }
+
+                },
+                function (reason) {
+                    console.error('Something went wrong', reason);
+                });
+            break;
+
+        case 'locations-list':
+            clientLocation.AllLocations(process.env.BOT_ID, session.userData.locationType)
                 .then(
-                    function (value) {
-                        if(value) {
-                            if (!Array.isArray(value))
-                                value = [value];
+                function (value) {
+                    if (value) {
+                        if (!Array.isArray(value)) value = [value];
+                        if (value.length > 0) {
                             var tarjetas = LocationsToHeroCards(value, builder, session);
                             var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
                             session.send(msj);
                         } else {
-                            session.send('No se encontraron registros');
+                            session.send(`No se encontraron ${locationEntity.entity}`);
                         }
-                        
-                    },
-                    function (reason) {
-                        console.error('Something went wrong', reason);
+                    } else {
+                        session.send('No se encontraron registros');
                     }
+
+                },
+                function (reason) {
+                    console.error('Something went wrong', reason);
+                }
                 );
-                session.endDialog();
-            } else {
-                session.beginDialog('/preguntarLugar');
-            }
             break;
         default:
             //var name = session.message.user ? session.message.user.name : null;
@@ -80,11 +114,11 @@ const secondStep = (session, args) => {
 }
 
 const getDefaultIntent = () => {
-    var recognizer = new apiairecognizer(process.env['ApiAiToken']); 
-    return new builder.IntentDialog({ recognizers: [recognizer] } )
-    .onDefault((session, args) => {
-        zeroStep(session, args, firstStep);
-    })
+    var recognizer = new apiairecognizer(process.env['ApiAiToken']);
+    return new builder.IntentDialog({ recognizers: [recognizer] })
+        .onDefault((session, args) => {
+            zeroStep(session, args, firstStep);
+        })
 }
 
 const setDialogs = (bot) => {
@@ -92,7 +126,8 @@ const setDialogs = (bot) => {
     bot.dialog('/', getDefaultIntent());
 
     bot.dialog('/preguntarLugar', [
-        function(session) {
+        function (session) {
+            //console.log(JSON.stringify(session, null, 2))
             var options = {
                 prompt: "Necesito tu ubicación para mostrarte las localidades más cercanas a ti.",
                 useNativeControl: true,
@@ -105,9 +140,9 @@ const setDialogs = (bot) => {
             if (results.response) {
                 var point = results.response.geo;
                 //session.send(place.streetAddress + ", " + place.locality + ", " + place.region + ", " + place.country + " (" + place.postalCode + ")");
-                console.log(JSON.stringify(point, null, 2));
-                clientLocation.NearLocations(process.env.BOT_ID, null, point.latitude, point.longitude, 50000)
-                .then(
+                console.log(JSON.stringify(session.userData.locationType, null, 2));
+                clientLocation.NearLocations(process.env.BOT_ID, session.userData.locationType, point.latitude, point.longitude, 50000)
+                    .then(
                     function (value) {
                         var tarjetas = LocationsToHeroCards(value, builder, session);
                         var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
@@ -116,7 +151,7 @@ const setDialogs = (bot) => {
                     function (reason) {
                         console.error('Something went wrong', reason);
                     }
-                );
+                    );
                 session.endDialog();
             }
             else {
@@ -163,22 +198,22 @@ const getText = (msg, name) => msg.text || (msg.paused ?
     `Hola${name}, a partir de este momento hablarás con la plataforma.`);
 
 var LocationsToHeroCards = (locations, builder, session) => {
-	var cards = [];
-	locations.forEach(function(location) {
-		var card = new builder.HeroCard(session)
-		.title(location.name)
-		.subtitle(location.ciudad)
-		.text(location.address)
-		.images([
-			builder.CardImage.create(session, `https://maps.googleapis.com/maps/api/staticmap?center=${location.geo.coordinates[0]},${location.geo.coordinates[1]}&zoom=13&scale=1&size=400x400&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C${location.geo.coordinates[0]},${location.geo.coordinates[1]}`)
-		])
-		.buttons([
-			builder.CardAction.openUrl(session, location.url_map, 'Abrir Mapa')
-		]);
-		cards.push(card);
-	});
+    var cards = [];
+    locations.forEach(function (location) {
+        var card = new builder.HeroCard(session)
+            .title(location.name)
+            .subtitle(location.ciudad)
+            .text(location.address)
+            .images([
+                builder.CardImage.create(session, `https://maps.googleapis.com/maps/api/staticmap?center=${location.geo.coordinates[0]},${location.geo.coordinates[1]}&zoom=13&scale=1&size=400x400&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C${location.geo.coordinates[0]},${location.geo.coordinates[1]}`)
+            ])
+            .buttons([
+                builder.CardAction.openUrl(session, location.url_map, 'Abrir Mapa')
+            ]);
+        cards.push(card);
+    });
 
-	return cards;
+    return cards;
 }
 
 module.exports = { setDialogs: setDialogs };
