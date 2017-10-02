@@ -28,6 +28,7 @@ const zeroStep = (session, args, next) => {
                     break;
                 case 2:
                     builder.Prompts.choice(session, element.entity.title, element.entity.replies.join('|'));
+                    session.endDialog();
                     break;
             }
         });
