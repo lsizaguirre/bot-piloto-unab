@@ -44,13 +44,14 @@ ApiAiRecognizer.prototype.recognize = function (context, done) {
                 intent = { score: result.score, intent: result.action, entities: entities_found };
             } else if (result.source == 'agent') {
                 var entities_found = [
+                    /*
                     {
                         entity: result.fulfillment.speech,
                         type: 'fulfillment',
                         startIndex: -1,
                         endIndex: -1,
                         score: 1
-                    },
+                    },*/
                     {
                         entity: result.actionIncomplete,
                         type: 'actionIncomplete',
@@ -86,7 +87,7 @@ ApiAiRecognizer.prototype.recognize = function (context, done) {
                     let message = result.fulfillment.messages[index];
                     let length = result.fulfillment.messages.length;
 
-                    if (message.platform == 'facebook') {
+                    if (message.platform == 'facebook'|| message.type == 0) {
                         let type = key;
                         let score = 1;
                         let startIndex = -1;
