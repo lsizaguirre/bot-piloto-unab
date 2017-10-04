@@ -88,6 +88,7 @@ const secondStep = (session, args) => {
             clientLocation.AllLocations(process.env.BOT_ID, session.userData.locationType)
                 .then(
                 function (value) {
+                    console.log('Value:' + value);
                     if (value) {
                         if (!Array.isArray(value)) value = [value];
                         if (value.length > 0) {

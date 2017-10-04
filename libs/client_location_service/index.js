@@ -16,6 +16,7 @@ exports.AllLocations = (bot_id, type_location) => {
 			type: type_location
 		}
 	};
+	console.log('Options:' + JSON.stringify(options, null, 2));
 	return MakeCall(options);
 }
 
