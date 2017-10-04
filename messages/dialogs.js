@@ -103,31 +103,7 @@ const secondStep = (session, args) => {
             break;
     }
 }
-//********************************* */
-//var recognizer = new apiairecognizer(process.env['ApiAiToken']);
-//var nplIntents = new builder.IntentDialog({ recognizers: [recognizer] })
 
-//nplIntents.onDefault((session, args) => {
-//    zeroStep(session, args, firstStep);
-//});
-
-const checkDashbot = (session) => {
-    const channelId = session.message.address.channelId;
-    const userId = session.message.user.id;
-
-    console.log(channelId);console.log(userId);
-
-    if (channelId === 'directline' && userId === 'dashbot-direct-line') {
-        sendMessage(session);
-        getDefaultIntent();
-    } else {
-        const cacheData = cache.get(userId) || { paused: false };
-        console.log(cacheData);
-        if (!cacheData.paused)
-            getDefaultIntent();
-    }
-}
-/**/////////*********************************** */
 const getDefaultIntent = (session) => {
 
     var recognizer = new apiairecognizer(process.env['ApiAiToken']);
@@ -155,7 +131,8 @@ const getDefaultIntent = (session) => {
 const setDialogs = (bot) => {
 
     //bot.dialog('/', getDefaultIntent());
-    bot.dialog('/', getDefaultIntent());
+    //bot.dialog('/', getDefaultIntent());
+    bot.dialog('/', getWaterfall());
 
     bot.dialog('/preguntarLugar', [
         function (session) {
@@ -249,3 +226,24 @@ var LocationsToHeroCards = (locations, builder, session) => {
 }
 
 module.exports = { setDialogs: setDialogs };
+
+
+const getWaterfall = () => [firstStepX, finalStepX];
+const firstStepX = (session, args, next) => {
+    const channelId = session.message.address.channelId;
+    const userId = session.message.user.id;
+
+    if (channelId === 'directline' && userId === 'DashbotChannel') {
+        sendMessage(session);
+        next();
+    } else {
+        const cacheData = cache.get(userId) || { paused: false };
+        if (!cacheData.paused)
+            session.send('Estamos realizando mejoras, pronto volveremos.');
+        else
+            next();
+    }
+};
+const finalStepX = (session, args, next) => {
+    session.endDialog();
+};
