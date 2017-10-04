@@ -1,6 +1,7 @@
 "use strict";
 var apiai = require('apiai');
 const uuid = require('uuid');
+const middleware = require('../middleware');
 
 var ApiAiRecognizer = function (token) {
     this.app  =  apiai(token);
@@ -22,6 +23,7 @@ ApiAiRecognizer.prototype.recognize = function (context, done) {
         var request = this.app.textRequest(context.message.text.toLowerCase(), { sessionId: sessionId });
 
         request.on('response', function (response) {
+            middleware.saveApiAiResponse(response, context.message.address)
             var result = response.result;
             if (result.source == 'domains') {
                 entities_found = [

@@ -3,10 +3,13 @@
 const mongoose = require('mongoose'),
       Schema = mongoose.Schema,
       ObjectID = mongoose.Types.ObjectId,
+      ApiAiResponseSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false }),
       InMessageSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false }),
       OutMessageSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false }),
+      ApiAiResponseModel = mongoose.model('apiai_response', ApiAiResponseSchema),
       InMessageModel = mongoose.model('in_message', InMessageSchema),
       OutMessageModel = mongoose.model('out_message', OutMessageSchema);
+      
 
 // Mongoose instance connection url connection
 mongoose.Promise = global.Promise;
@@ -44,4 +47,14 @@ const initMiddleware = (bot) => {
     
 }
 
-module.exports = { initMiddleware: initMiddleware }
+const saveApiAiResponse = (response, address) => {
+    try {
+        console.log('Guardando...');
+        response.address = address;
+        new ApiAiResponseModel(response).save();
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+module.exports = { initMiddleware: initMiddleware, saveApiAiResponse: saveApiAiResponse }
