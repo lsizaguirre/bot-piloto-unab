@@ -232,6 +232,8 @@ const getWaterfall = () => [firstStepX, finalStepX];
 const firstStepX = (session, args, next) => {
     const channelId = session.message.address.channelId;
     const userId = session.message.user.id;
+    session.send('channelId: ' + channelId);
+    session.send('userId: ' + userId);
 
     if (channelId === 'directline' && userId === 'DashbotChannel') {
         sendMessage(session);
