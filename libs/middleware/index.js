@@ -8,16 +8,30 @@ const mongoose = require('mongoose'),
       OutMessageSchema = new Schema({ type: Schema.Types.Mixed }, { strict : false }),
       ApiAiResponseModel = mongoose.model('apiai_response', ApiAiResponseSchema),
       InMessageModel = mongoose.model('in_message', InMessageSchema),
-      OutMessageModel = mongoose.model('out_message', OutMessageSchema);
+      OutMessageModel = mongoose.model('out_message', OutMessageSchema),
+      NodeCache = require('node-cache');
+      
+      const cache = new NodeCache({ stdTTL: process.env.TTL })
       
 
 // Mongoose instance connection url connection
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGO_CONNECTION_STRING); 
 
+const getName = message => message.user.name.split(" ", 1)[0];
 // Function to Incoming Messages
 const logIncomingMessage = (session, next) => {
     try {
+        //Set cache address
+        const userId = session.message.user.id;
+        const cacheData = cache.get(userId) || { paused: false, name: undefined, address: undefined };
+        cache.set(userId, {
+            paused: cacheData.paused,
+            name: getName(session.message),
+            address: session.message.address
+        });
+
+        // Save in mongodb store
         session.message.bot_id = new ObjectID(process.env.BOT_ID);
         new InMessageModel(session.message).save();
         next();

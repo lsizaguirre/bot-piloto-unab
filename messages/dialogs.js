@@ -184,7 +184,7 @@ var sendMessage = (session) => {
         let errorMsg = undefined;
         const name = cacheData.name ? ` ${cacheData.name}` : '';
         const text = getText(msg, name);
-    
+
         if (cacheData.address) {
             if (!lastState && msg.paused && msg.text) {
                 const txt = `Hola${name}, a partir de este momento hablarás con una persona.`;
@@ -237,8 +237,6 @@ module.exports = { setDialogs: setDialogs };
 const getWaterfall = () => [firstStepX, finalStepX];
 
 const firstStepX = (session, args, next) => {
-    cache.set('ci', '15832533');
-    
     const channelId = session.message.address.channelId;
     const userId = session.message.user.id;
 
