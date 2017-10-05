@@ -176,7 +176,7 @@ var sendMessage = (session) => {
     try {
         const msg = JSON.parse(session.message.text);
         const cacheData = middleware.cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
-    
+    session.send(JSON.stringify(cacheData, null, 2));
         const lastState = cacheData.paused;
         cacheData.paused = msg.paused;
         middleware.cache.set(msg.userId, cacheData);
