@@ -172,34 +172,39 @@ const setDialogs = (bot) => {
 }
 
 var sendMessage = (session) => {
-    const msg = JSON.parse(session.message.text);
-    const cacheData = cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
-
-    const lastState = cacheData.paused;
-    cacheData.paused = msg.paused;
-    cache.set(msg.userId, cacheData);
-
-    let errorMsg = undefined;
-    const name = cacheData.name ? ` ${cacheData.name}` : '';
-    const text = getText(msg, name);
-
-    if (cacheData.address) {
-        if (!lastState && msg.paused && msg.text) {
-            const txt = `Hola${name}, a partir de este momento hablarás con una persona.`;
-            session.library.send(
-                new builder.Message().text(txt).address(cacheData.address),
-                () => session.library.send(new builder.Message().text(text).address(cacheData.address)));
+    try {
+        const msg = session.message;
+        const cacheData = cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
+    
+        const lastState = cacheData.paused;
+        cacheData.paused = msg.paused;
+        cache.set(msg.userId, cacheData);
+    
+        let errorMsg = undefined;
+        const name = cacheData.name ? ` ${cacheData.name}` : '';
+        const text = getText(msg, name);
+    
+        if (cacheData.address) {
+            if (!lastState && msg.paused && msg.text) {
+                const txt = `Hola${name}, a partir de este momento hablarás con una persona.`;
+                session.library.send(
+                    new builder.Message().text(txt).address(cacheData.address),
+                    () => session.library.send(new builder.Message().text(text).address(cacheData.address)));
+            } else {
+                session.library.send(new builder.Message().text(text).address(cacheData.address));
+            }
         } else {
-            session.library.send(new builder.Message().text(text).address(cacheData.address));
+            const topic = msg.text ? `el mensaje ${msg.text}` : `la desactivación/activación del bot`;
+            errorMsg = `Error: No se pudo enviar "${topic}" ` +
+                `al cliente "${msg.userId}" porque la dirección del mismo no aparece en la cache.`;
+            console.error(errorMsg);
         }
-    } else {
-        const topic = msg.text ? `el mensaje ${msg.text}` : `la desactivación/activación del bot`;
-        errorMsg = `Error: No se pudo enviar "${topic}" ` +
-            `al cliente "${msg.userId}" porque la dirección del mismo no aparece en la cache.`;
-        console.error(errorMsg);
+    
+        session.send(errorMsg || (msg.text ? 'Mensaje enviado.' : 'Detención/Activación del bot.'));    
+    } catch (error) {
+        session.send(error);
     }
-
-    session.send(errorMsg || (msg.text ? 'Mensaje enviado.' : 'Detención/Activación del bot.'));
+    
 }
 
 const getText = (msg, name) => msg.text || (msg.paused ?
