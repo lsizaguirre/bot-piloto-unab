@@ -131,8 +131,8 @@ const getDefaultIntent = (session) => {
 const setDialogs = (bot) => {
 
     //bot.dialog('/', getDefaultIntent());
-    //bot.dialog('/', getDefaultIntent());
-    bot.dialog('/', getWaterfall());
+    bot.dialog('/', getDefaultIntent());
+    //bot.dialog('/', getWaterfall());
 
     bot.dialog('/preguntarLugar', [
         function (session) {
@@ -172,12 +172,9 @@ const setDialogs = (bot) => {
 }
 
 var sendMessage = (session) => {
-    session.send('Respondí');
-    /*
     const msg = JSON.parse(session.message.text);
-    let cacheData = cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
-    session.send('cacheData:' + JSON.stringify(cacheData, null, 2));
-session.endDialog();
+    const cacheData = cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
+
     const lastState = cacheData.paused;
     cacheData.paused = msg.paused;
     cache.set(msg.userId, cacheData);
@@ -203,7 +200,6 @@ session.endDialog();
     }
 
     session.send(errorMsg || (msg.text ? 'Mensaje enviado.' : 'Detención/Activación del bot.'));
-    */
 }
 
 const getText = (msg, name) => msg.text || (msg.paused ?
