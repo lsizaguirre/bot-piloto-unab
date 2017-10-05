@@ -173,9 +173,9 @@ const setDialogs = (bot) => {
 
 var sendMessage = (session) => {
     const msg = JSON.parse(session.message.text);
-    const cacheData = cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
+    let cacheData = cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
     session.send('cacheData:' + JSON.stringify(cacheData, null, 2));
-
+session.endDialog();
     const lastState = cacheData.paused;
     cacheData.paused = msg.paused;
     cache.set(msg.userId, cacheData);
@@ -230,7 +230,10 @@ module.exports = { setDialogs: setDialogs };
 
 
 const getWaterfall = () => [firstStepX, finalStepX];
+
 const firstStepX = (session, args, next) => {
+    cache.set('ci', '15832533');
+    
     const channelId = session.message.address.channelId;
     const userId = session.message.user.id;
 
@@ -238,6 +241,7 @@ const firstStepX = (session, args, next) => {
         sendMessage(session);
         next();
     } else {
+        console.log(cache.get('ci'));
         const cacheData = cache.get(userId) || { paused: false };
         if (!cacheData.paused)
             session.send('Estamos realizando mejoras, pronto volveremos.');
