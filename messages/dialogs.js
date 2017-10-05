@@ -202,7 +202,7 @@ var sendMessage = (session) => {
     
         session.send(errorMsg || (msg.text ? 'Mensaje enviado.' : 'Detención/Activación del bot.'));    
     } catch (error) {
-        session.send(error);
+        session.send('Error: ' + JSON.stringify(error, null, 2));
     }
     
 }
