@@ -172,6 +172,8 @@ const setDialogs = (bot) => {
 }
 
 var sendMessage = (session) => {
+    session.send('Respondí');
+    /*
     const msg = JSON.parse(session.message.text);
     let cacheData = cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
     session.send('cacheData:' + JSON.stringify(cacheData, null, 2));
@@ -201,6 +203,7 @@ session.endDialog();
     }
 
     session.send(errorMsg || (msg.text ? 'Mensaje enviado.' : 'Detención/Activación del bot.'));
+    */
 }
 
 const getText = (msg, name) => msg.text || (msg.paused ?
