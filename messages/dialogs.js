@@ -172,8 +172,10 @@ const setDialogs = (bot) => {
 }
 
 var sendMessage = (session) => {
+    session.send('Message:' + session.message);
     const msg = JSON.parse(session.message.text);
     const cacheData = cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
+    session.send('cacheData:' + cacheData);
 
     const lastState = cacheData.paused;
     cacheData.paused = msg.paused;
