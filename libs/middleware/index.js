@@ -22,6 +22,7 @@ const getName = message => message.user.name.split(" ", 1)[0];
 // Function to Incoming Messages
 const logIncomingMessage = (session, next) => {
     try {
+        console.log('Saving');
         //Set cache address
         const userId = session.message.user.id;
         const cacheData = cache.get(userId) || { paused: false, name: undefined, address: undefined };
@@ -30,6 +31,8 @@ const logIncomingMessage = (session, next) => {
             name: getName(session.message),
             address: session.message.address
         });
+
+        console.log('Cache: ' + JSON.stringify(cache.get(userId), 2, null));
 
         // Save in mongodb store
         session.message.bot_id = new ObjectID(process.env.BOT_ID);
@@ -71,4 +74,4 @@ const saveApiAiResponse = (response, address) => {
     }
 }
 
-module.exports = { initMiddleware: initMiddleware, saveApiAiResponse: saveApiAiResponse }
+module.exports = { initMiddleware: initMiddleware, saveApiAiResponse: saveApiAiResponse, cache:cache }

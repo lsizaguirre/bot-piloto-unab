@@ -1,12 +1,10 @@
 'use strict';
 
 const apiairecognizer = require('../libs/api-ai-recognizer'),
+middleware = require('../libs/middleware'),
     builder = require("botbuilder"),
     clientLocation = require('../libs/client_location_service'),
-    locationDialog = require('botbuilder-location'),
-    NodeCache = require('node-cache');
-
-const cache = new NodeCache({ stdTTL: process.env.TTL })
+    locationDialog = require('botbuilder-location');
 
 // Debo cambiarlo para que lo consulte en BD o env
 const getLocationType = type => {
@@ -108,6 +106,9 @@ const getDefaultIntent = (session) => {
     var recognizer = new apiairecognizer(process.env['ApiAiToken']);
     return new builder.IntentDialog({ recognizers: [recognizer] })
         .onDefault((session, args) => {
+
+            //console.log('Cache OUT: ' + JSON.stringify(middleware.cache.get(session.message.user.id), 2, null));
+
             session.sendTyping();
             const channelId = session.message.address.channelId;
             const userId = session.message.user.id;
@@ -118,7 +119,7 @@ const getDefaultIntent = (session) => {
                 sendMessage(session);
                 //getDefaultIntent();
             } else {
-                const cacheData = cache.get(userId) || { paused: false };
+                const cacheData = middleware.cache.get(userId) || { paused: false };
                 console.log(cacheData);
                 if (!cacheData.paused)
                     zeroStep(session, args, firstStep);
@@ -174,11 +175,11 @@ const setDialogs = (bot) => {
 var sendMessage = (session) => {
     try {
         const msg = JSON.parse(session.message.text);
-        const cacheData = cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
+        const cacheData = middleware.cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
     
         const lastState = cacheData.paused;
         cacheData.paused = msg.paused;
-        cache.set(msg.userId, cacheData);
+        middleware.cache.set(msg.userId, cacheData);
     
         let errorMsg = undefined;
         const name = cacheData.name ? ` ${cacheData.name}` : '';
@@ -243,8 +244,7 @@ const firstStepX = (session, args, next) => {
         sendMessage(session);
         next();
     } else {
-        console.log(cache.get('ci'));
-        const cacheData = cache.get(userId) || { paused: false };
+        const cacheData = middleware.cache.get(userId) || { paused: false };
         if (!cacheData.paused)
             session.send('Estamos realizando mejoras, pronto volveremos.');
         else
