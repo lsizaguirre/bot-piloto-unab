@@ -177,7 +177,7 @@ var sendMessage = (session) => {
 
     const lastState = cacheData.paused;
     cacheData.paused = msg.paused;
-    module.exports.cache.set(msg.userId, cacheData);
+    cache.set(msg.userId, cacheData);
 
     let errorMsg = undefined;
     const name = cacheData.name ? ` ${cacheData.name}` : '';
@@ -232,8 +232,6 @@ const getWaterfall = () => [firstStepX, finalStepX];
 const firstStepX = (session, args, next) => {
     const channelId = session.message.address.channelId;
     const userId = session.message.user.id;
-    //session.send('channelId: ' + channelId);
-    session.send('userId: ' + userId);
 
     if (channelId === 'directline' && userId === 'dashbot-direct-line') { //dashbot-direct-line
         sendMessage(session);
