@@ -105,10 +105,10 @@ const secondStep = (session, args) => {
 }
 
 const getDefaultIntent = (session) => {
-
     var recognizer = new apiairecognizer(process.env['ApiAiToken']);
     return new builder.IntentDialog({ recognizers: [recognizer] })
         .onDefault((session, args) => {
+            session.sendTyping();
             const channelId = session.message.address.channelId;
             const userId = session.message.user.id;
         
