@@ -79,16 +79,19 @@ const secondStep = (session, args) => {
                     if (value) {
                         if (!Array.isArray(value)) 
                             value = [value];
-                        session.send('a');
+                        
                         if (value.length > 0) {
+                            session.send('a');
                             session.send(value.length);
                             var tarjetas = LocationsToHeroCards(value, builder, session);
                             var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
                             session.send(msj);
                         } else {
+                            session.send('b');
                             //session.send(`No se encontraron ${locationEntity.entity}`);
                             session.send('No se encontraron registros');
                         }
+                        session.send('c');
                     } else {
                         session.send('No se encontraron registros');
                     }
