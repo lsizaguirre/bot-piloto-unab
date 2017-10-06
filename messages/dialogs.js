@@ -37,7 +37,7 @@ const zeroStep = (session, args, next) => {
 
 const firstStep = (session, args, next) => {
 
-            next(session, args);
+            next(session, args, secondStep);
 }
 
 const secondStep = (session, args) => {
@@ -97,7 +97,15 @@ const secondStep = (session, args) => {
             break;
         default:
             //var name = session.message.user ? session.message.user.name : null;
-            session.send(args.entities[0].entity);
+            //session.send(args.entities[0].entity);
+
+            var fulfillmentEntities = builder.EntityRecognizer.findAllEntities(args.entities, 'fulfillment');
+            if (fulfillmentEntities.length != 0) {
+                fulfillmentEntities.forEach(function (element) {
+                    session.send(element.entity);
+                });
+            }
+
             break;
     }
 }
