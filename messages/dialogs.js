@@ -77,9 +77,11 @@ const secondStep = (session, args) => {
                 function (value) {
                     console.log('Value:' + value);
                     if (value) {
-                        session.send(JSON.stringify(value, null, 2));
-                        if (!Array.isArray(value)) value = [value];
+                        if (!Array.isArray(value)) 
+                            value = [value];
+                        session.send('a');
                         if (value.length > 0) {
+                            session.send(value.length);
                             var tarjetas = LocationsToHeroCards(value, builder, session);
                             var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
                             session.send(msj);
