@@ -117,7 +117,7 @@ const getDefaultIntent = (session) => {
 
             //console.log('Cache OUT: ' + JSON.stringify(middleware.cache.get(session.message.user.id), 2, null));
 
-            session.sendTyping();
+            //session.sendTyping();
             const channelId = session.message.address.channelId;
             const userId = session.message.user.id;
         
