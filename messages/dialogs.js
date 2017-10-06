@@ -75,11 +75,11 @@ const secondStep = (session, args) => {
             clientLocation.AllLocations(process.env.BOT_ID, session.userData.locationType)
                 .then(
                 function (value) {
-                    session.send('...');
                     console.log('Value:' + value);
                     if (value) {
                         if (!Array.isArray(value)) value = [value];
                         if (value.length > 0) {
+                            session.send(value.length);
                             var tarjetas = LocationsToHeroCards(value, builder, session);
                             var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
                             session.send(msj);
