@@ -82,10 +82,11 @@ const secondStep = (session, args) => {
                         
                         if (value.length > 0) {
                             var tarjetas = LocationsToHeroCards(value, builder, session);
-                            session.send('x');
+                            
                             var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
                             
                             session.send(msj);
+                            session.send('x');
                         } else {
                             session.send('b');
                             //session.send(`No se encontraron ${locationEntity.entity}`);
