@@ -81,10 +81,10 @@ const secondStep = (session, args) => {
                             value = [value];
                         
                         if (value.length > 0) {
-                            session.send('a');
-                            session.send(value.length);
                             var tarjetas = LocationsToHeroCards(value, builder, session);
+                            session.send('x');
                             var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
+                            
                             session.send(msj);
                         } else {
                             session.send('b');
