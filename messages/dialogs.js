@@ -75,15 +75,12 @@ const secondStep = (session, args) => {
             clientLocation.AllLocations(process.env.BOT_ID, session.userData.locationType)
                 .then(
                 function (value) {
-                    console.log('Value:' + value);
                     if (value) {
                         if (!Array.isArray(value)) value = [value];
                         if (value.length > 0) {
-                            var t = LocationsToHeroCards(value, builder, session);
-                            var m = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(t);
-                            //session.send('No se puede recuperar el listado');
-                            //session.send(JSON.stringify(msj, null, 2));
-                            session.send(m);
+                            var tarjetas = LocationsToHeroCards(value, builder, session);
+                            var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
+                            session.send(msj);
                         } else {
                             //session.send(`No se encontraron ${locationEntity.entity}`);
                             session.send('No se encontraron registros');
@@ -120,7 +117,7 @@ const getDefaultIntent = (session) => {
 
             //console.log('Cache OUT: ' + JSON.stringify(middleware.cache.get(session.message.user.id), 2, null));
 
-            //session.sendTyping();
+            session.sendTyping();
             const channelId = session.message.address.channelId;
             const userId = session.message.user.id;
         
