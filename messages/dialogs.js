@@ -77,14 +77,15 @@ const secondStep = (session, args) => {
                 function (value) {
                     console.log('Value:' + value);
                     if (value) {
+                        session.send(JSON.stringify(value, null, 2));
                         if (!Array.isArray(value)) value = [value];
                         if (value.length > 0) {
-                            session.send(value.length);
                             var tarjetas = LocationsToHeroCards(value, builder, session);
                             var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
                             session.send(msj);
                         } else {
-                            session.send(`No se encontraron ${locationEntity.entity}`);
+                            //session.send(`No se encontraron ${locationEntity.entity}`);
+                            session.send('No se encontraron registros');
                         }
                     } else {
                         session.send('No se encontraron registros');
