@@ -81,7 +81,8 @@ const secondStep = (session, args) => {
                         if (value.length > 0) {
                             var tarjetas = LocationsToHeroCards(value, builder, session);
                             var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
-                            session.send(JSON.stringify(msj, null, 2));
+                            session.send('No se puede recuperar el listado');
+                            //session.send(JSON.stringify(msj, null, 2));
                         } else {
                             //session.send(`No se encontraron ${locationEntity.entity}`);
                             session.send('No se encontraron registros');
