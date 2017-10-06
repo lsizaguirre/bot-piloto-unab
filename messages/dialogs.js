@@ -31,8 +31,7 @@ const zeroStep = (session, args, next) => {
             }
         });
     }
-    else
-        next(session, args, secondStep);
+    next(session, args, secondStep);
 }
 
 const firstStep = (session, args, next) => {
