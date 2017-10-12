@@ -7,13 +7,15 @@ middleware = require('../libs/middleware'),
     locationDialog = require('botbuilder-location');
 
 // Debo cambiarlo para que lo consulte en BD o env
-const getLocationType = type => {
-    switch (type) {
-        case 'facultades': return "59c2765a518a97998d3a6d84";
-        case 'sedes': return "59c27671518a97998d3a7bad";
-        case 'departamentos': return "59cdccd158a4d569e5120997";
-        default: return null;
-    }
+const getLocationType = typeLocation => {
+    if(typeLocation === 'facultades')
+        return '59c2765a518a97998d3a6d84';
+    else if(typeLocation === 'sedes')
+        return '59c27671518a97998d3a7bad';
+    else if(typeLocation === 'departamentos')
+        return '59cdccd158a4d569e5120997';
+    else
+        return '59c27671518a97998d3a7bad';
 }
 
 const zeroStep = (session, args, next) => {
@@ -44,8 +46,11 @@ const secondStep = (session, args) => {
 
     console.log('Intent: ' + args.intent);
     var locationEntity = builder.EntityRecognizer.findEntity(args.entities, 'Locations');
-    if (locationEntity)
-        session.userData.locationType = getLocationType(locationEntity.entity);
+    if (locationEntity){
+        console.log('->' + locationEntity.entity)
+        session.userData.locationType = getLocationType('' + locationEntity.entity);
+    }
+        
 
     switch (args.intent) {
         case 'locations-near':
