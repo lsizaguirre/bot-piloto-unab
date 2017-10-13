@@ -12,8 +12,6 @@ const mongoose = require('mongoose'),
       NodeCache = require('node-cache');
       
       const cache = new NodeCache({ stdTTL: process.env.TTL });
-
-      const promiseCache = require('promise-cache').create();
       
 
 // Mongoose instance connection url connection
