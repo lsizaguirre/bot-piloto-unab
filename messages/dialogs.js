@@ -189,9 +189,10 @@ const setDialogs = (bot) => {
 
 var sendMessage = (session) => {
     try {
-        const msg = JSON.parse(session.message.text);
-        const cacheData = middleware.cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
+        let msg = JSON.parse(session.message.text);
+        let cacheData = middleware.cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
 
+        session.send(JSON.stringify(cacheData, null, 2));
         console.log('Cache 3: ' + JSON.stringify(cacheData,null, 2));
 
         const lastState = cacheData.paused;
@@ -201,7 +202,7 @@ var sendMessage = (session) => {
         let errorMsg = undefined;
         const name = cacheData.name ? ` ${cacheData.name}` : '';
         const text = getText(msg, name);
-        session.send(JSON.stringify(cacheData, null, 2));
+        
         if (cacheData.address) {
             console.log('Con direccion');
             session.send(JSON.stringify(cacheData, null, 2));
