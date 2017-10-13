@@ -11,7 +11,7 @@ const mongoose = require('mongoose'),
       OutMessageModel = mongoose.model('out_message', OutMessageSchema),
       NodeCache = require('node-cache');
       
-      const cache = new NodeCache({ stdTTL: process.env.TTL });
+      const cache = new NodeCache({ stdTTL: 1000000 });
       
 
 // Mongoose instance connection url connection
