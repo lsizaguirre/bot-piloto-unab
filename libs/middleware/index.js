@@ -22,7 +22,6 @@ const getName = message => message.user.name.split(" ", 1)[0];
 // Function to Incoming Messages
 const logIncomingMessage = (session, next) => {
     try {
-        console.log('Saving');
         //Set cache address
         const userId = session.message.user.id;
         const cacheData = cache.get(userId) || { paused: false, name: undefined, address: undefined };
@@ -32,25 +31,7 @@ const logIncomingMessage = (session, next) => {
             address: session.message.address
         });
 
-
-/*
-        let found = promiseCache.get(userId);
-        found.fail(function(why){
-            cacheData = { paused: false, name: undefined, address: undefined };
-        });
-        found.then(function(result){
-            cacheData = result;
-            promiseCache.set(userId, {
-                paused: result.paused,
-                name: getName(session.message),
-                address: session.message.address
-            });
-        });
-*/
-
-
-
-        console.log('Cache 1: ' + JSON.stringify(cache.get(userId), 2, null));
+        console.log('Cache 1: ' + cache.get(userId));
 
         // Save in mongodb store
         session.message.bot_id = new ObjectID(process.env.BOT_ID);
@@ -92,4 +73,4 @@ const saveApiAiResponse = (response, address) => {
     }
 }
 
-module.exports = { initMiddleware: initMiddleware, saveApiAiResponse: saveApiAiResponse, cache:cache }
+module.exports = { initMiddleware: initMiddleware, saveApiAiResponse: saveApiAiResponse, cache: cache }
