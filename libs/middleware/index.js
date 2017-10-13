@@ -92,4 +92,4 @@ const saveApiAiResponse = (response, address) => {
     }
 }
 
-module.exports = { initMiddleware: initMiddleware, saveApiAiResponse: saveApiAiResponse, cache:cache, promiseCache: promiseCache }
+module.exports = { initMiddleware: initMiddleware, saveApiAiResponse: saveApiAiResponse, cache:cache }
