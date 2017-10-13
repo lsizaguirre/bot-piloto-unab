@@ -201,7 +201,7 @@ var sendMessage = (session) => {
         let errorMsg = undefined;
         const name = cacheData.name ? ` ${cacheData.name}` : '';
         const text = getText(msg, name);
-
+        session.send(JSON.stringify(cacheData, null, 2));
         if (cacheData.address) {
             console.log('Con direccion');
             session.send(JSON.stringify(cacheData, null, 2));
