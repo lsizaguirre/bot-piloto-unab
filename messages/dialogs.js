@@ -129,6 +129,8 @@ const getDefaultIntent = (session) => {
             console.log(channelId);console.log(userId);
             console.log('Cache 2: ' + JSON.stringify(middleware.cache.get(userId), 2, null));
 
+            console.log('CACHE INFO: ' + JSON.stringify(middleware.cache.data, null, 2));
+
             if (channelId === 'directline' && userId === 'dashbot-direct-line') {
             //if (channelId === 'emulator' && userId === 'default-user') {
                 sendMessage(session);
@@ -192,7 +194,7 @@ var sendMessage = (session) => {
         let msg = JSON.parse(session.message.text);
         let cacheData = middleware.cache.get('' + msg.userId) || { paused: false, name: undefined, address: undefined };
 
-        session.send(JSON.stringify(cacheData, null, 2));
+        session.send('CACHE: ' + JSON.stringify(middleware.cache.data, null, 2));
         console.log('Cache 3: ' + JSON.stringify(cacheData,null, 2));
 
         const lastState = cacheData.paused;
