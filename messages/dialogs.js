@@ -127,8 +127,10 @@ const getDefaultIntent = (session) => {
             const userId = session.message.user.id;
         
             console.log(channelId);console.log(userId);
+            console.log('Cache 2: ' + JSON.stringify(middleware.cache.get(userId), 2, null));
 
-            if (channelId === 'directline' && userId === 'dashbot-direct-line') {
+            //if (channelId === 'directline' && userId === 'dashbot-direct-line') {
+            if (channelId === 'emulator' && userId === 'default-user') {
                 sendMessage(session);
                 //getDefaultIntent();
             } else {
@@ -189,7 +191,9 @@ var sendMessage = (session) => {
     try {
         const msg = JSON.parse(session.message.text);
         const cacheData = middleware.cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
-    
+
+        console.log('Cache 3: ' + JSON.stringify(cacheData,null, 2));
+
         const lastState = cacheData.paused;
         cacheData.paused = msg.paused;
         middleware.cache.set(msg.userId, cacheData);
@@ -197,8 +201,10 @@ var sendMessage = (session) => {
         let errorMsg = undefined;
         const name = cacheData.name ? ` ${cacheData.name}` : '';
         const text = getText(msg, name);
-session.send(JSON.stringify(cacheData, null, 2));
+
         if (cacheData.address) {
+            console.log('Con direccion');
+            session.send(JSON.stringify(cacheData, null, 2));
             if (!lastState && msg.paused && msg.text) {
                 const txt = `Hola${name}, a partir de este momento hablarás con una persona.`;
                 session.library.send(
@@ -214,7 +220,7 @@ session.send(JSON.stringify(cacheData, null, 2));
             console.error(errorMsg);
         }
     
-        session.send(errorMsg || (msg.text ? 'Mensaje enviado.' : 'Detención/Activación del bot.'));    
+        session.send(errorMsg || (msg.text ? 'Mensaje enviado.' : 'Detención/Activación del bot.'));  
     } catch (error) {
         session.send('Error: ' + JSON.stringify(error, null, 2));
     }

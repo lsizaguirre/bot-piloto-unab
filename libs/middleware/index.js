@@ -32,7 +32,7 @@ const logIncomingMessage = (session, next) => {
             address: session.message.address
         });
 
-        console.log('Cache: ' + JSON.stringify(cache.get(userId), 2, null));
+        console.log('Cache 1: ' + JSON.stringify(cache.get(userId), 2, null));
 
         // Save in mongodb store
         session.message.bot_id = new ObjectID(process.env.BOT_ID);
