@@ -192,10 +192,10 @@ const setDialogs = (bot) => {
 var sendMessage = (session) => {
     try {
         let msg = JSON.parse(session.message.text);
-        let cacheData = middleware.cache.get('' + msg.userId) || { paused: false, name: undefined, address: undefined };
+        let cacheData = middleware.cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
 
-        session.send('CACHE: ' + JSON.stringify(middleware.cache.data, null, 2));
-        console.log('Cache 3: ' + JSON.stringify(cacheData,null, 2));
+        //session.send('CACHE: ' + JSON.stringify(middleware.cache.data, null, 2));
+        //console.log('Cache 3: ' + JSON.stringify(cacheData,null, 2));
 
         const lastState = cacheData.paused;
         cacheData.paused = msg.paused;
