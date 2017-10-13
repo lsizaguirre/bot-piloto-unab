@@ -129,8 +129,8 @@ const getDefaultIntent = (session) => {
             console.log(channelId);console.log(userId);
             console.log('Cache 2: ' + JSON.stringify(middleware.cache.get(userId), 2, null));
 
-            //if (channelId === 'directline' && userId === 'dashbot-direct-line') {
-            if (channelId === 'emulator' && userId === 'default-user') {
+            if (channelId === 'directline' && userId === 'dashbot-direct-line') {
+            //if (channelId === 'emulator' && userId === 'default-user') {
                 sendMessage(session);
                 //getDefaultIntent();
             } else {
