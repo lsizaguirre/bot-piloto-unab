@@ -35,7 +35,7 @@ const logIncomingMessage = (session, next) => {
         });
 
 
-
+/*
         let found = promiseCache.get(userId);
         found.fail(function(why){
             cacheData = { paused: false, name: undefined, address: undefined };
@@ -48,7 +48,7 @@ const logIncomingMessage = (session, next) => {
                 address: session.message.address
             });
         });
-
+*/
 
 
 
