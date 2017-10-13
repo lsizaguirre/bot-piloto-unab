@@ -27,6 +27,7 @@
     "dotenv": "^4.0.0",
     "mongoose": "4.10.8",
     "node-cache": "^4.1.1",
+    "promise-cache": "^0.1.8",
     "request": "^2.81.0",
     "restify": "^5.2.0",
     "uuid": "^3.1.0"

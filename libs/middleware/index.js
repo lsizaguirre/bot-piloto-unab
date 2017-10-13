@@ -11,7 +11,9 @@ const mongoose = require('mongoose'),
       OutMessageModel = mongoose.model('out_message', OutMessageSchema),
       NodeCache = require('node-cache');
       
-      const cache = new NodeCache({ stdTTL: process.env.TTL })
+      const cache = new NodeCache({ stdTTL: process.env.TTL });
+
+      const promiseCache = require('promise-cache').create();
       
 
 // Mongoose instance connection url connection
@@ -31,6 +33,24 @@ const logIncomingMessage = (session, next) => {
             name: getName(session.message),
             address: session.message.address
         });
+
+
+
+        let found = promiseCache.get(userId);
+        found.fail(function(why){
+            cacheData = { paused: false, name: undefined, address: undefined };
+        });
+        found.then(function(result){
+            cacheData = result;
+            promiseCache.set(userId, {
+                paused: result.paused,
+                name: getName(session.message),
+                address: session.message.address
+            });
+        });
+
+
+
 
         console.log('Cache 1: ' + JSON.stringify(cache.get(userId), 2, null));
 
@@ -74,4 +94,4 @@ const saveApiAiResponse = (response, address) => {
     }
 }
 
-module.exports = { initMiddleware: initMiddleware, saveApiAiResponse: saveApiAiResponse, cache:cache }
+module.exports = { initMiddleware: initMiddleware, saveApiAiResponse: saveApiAiResponse, cache:cache, promiseCache: promiseCache }

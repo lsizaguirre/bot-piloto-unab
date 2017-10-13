@@ -1,7 +1,7 @@
 'use strict';
 
 const apiairecognizer = require('../libs/api-ai-recognizer'),
-middleware = require('../libs/middleware'),
+    middleware = require('../libs/middleware'),
     builder = require("botbuilder"),
     clientLocation = require('../libs/client_location_service'),
     locationDialog = require('botbuilder-location');
@@ -190,14 +190,24 @@ const setDialogs = (bot) => {
 var sendMessage = (session) => {
     try {
         let msg = JSON.parse(session.message.text);
-        let cacheData = middleware.cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
+
+        let cacheData;
+        let found = middleware.promiseCache.get(userId);
+        found.fail(function(why){
+            cacheData = { paused: false, name: undefined, address: undefined };
+        });
+        found.then(function(result){
+            cacheData = result;
+        });
+
+        //let cacheData = middleware.cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
 
         session.send(JSON.stringify(cacheData, null, 2));
         console.log('Cache 3: ' + JSON.stringify(cacheData,null, 2));
 
         const lastState = cacheData.paused;
         cacheData.paused = msg.paused;
-        middleware.cache.set(msg.userId, cacheData);
+        //middleware.cache.set(msg.userId, cacheData);
     
         let errorMsg = undefined;
         const name = cacheData.name ? ` ${cacheData.name}` : '';
