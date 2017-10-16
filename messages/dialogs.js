@@ -192,7 +192,7 @@ const setDialogs = (bot) => {
 var sendMessage = (session) => {
     try {
         let msg = JSON.parse(session.message.text);
-        let cacheData = middleware.cache.get(msg.userId) || { paused: false, name: undefined, address: undefined };
+        let cacheData = middleware.cache.get('' + msg.userId) || { paused: false, name: undefined, address: undefined };
 
         //session.send('CACHE: ' + JSON.stringify(middleware.cache.data, null, 2));
         //console.log('Cache 3: ' + JSON.stringify(cacheData,null, 2));
@@ -206,8 +206,8 @@ var sendMessage = (session) => {
         const text = getText(msg, name);
         
         if (cacheData.address) {
-            console.log('Con direccion');
-            session.send(JSON.stringify(cacheData, null, 2));
+            //console.log('Con direccion');
+            //session.send(JSON.stringify(cacheData, null, 2));
             if (!lastState && msg.paused && msg.text) {
                 const txt = `Hola${name}, a partir de este momento hablarás con una persona.`;
                 session.library.send(
