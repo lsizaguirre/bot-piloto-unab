@@ -1,10 +1,10 @@
 'use strict';
 
 const apiairecognizer = require('../libs/api-ai-recognizer'),
-middleware = require('../libs/middleware'),
-    builder = require("botbuilder"),
-    clientLocation = require('../libs/client_location_service'),
-    locationDialog = require('botbuilder-location');
+      middleware      = require('../libs/middleware'),
+      builder         = require("botbuilder"),
+      clientLocation  = require('../libs/client_location_service'),
+      locationDialog  = require('botbuilder-location');
 
 // Debo cambiarlo para que lo consulte en BD o env
 const getLocationType = typeLocation => {
@@ -18,7 +18,7 @@ const getLocationType = typeLocation => {
         return '59c27671518a97998d3a7bad';
 }
 
-const zeroStep = (session, args, next) => {
+const firstStep = (session, args, next) => {
     var facebookEntities = builder.EntityRecognizer.findAllEntities(args.entities, 'facebook');
     if (facebookEntities.length != 0) {
         facebookEntities.forEach(function (element) {
@@ -37,20 +37,11 @@ const zeroStep = (session, args, next) => {
         next(session, args, secondStep);
 }
 
-const firstStep = (session, args, next) => {
-
-            next(session, args, secondStep);
-}
-
 const secondStep = (session, args) => {
 
-    console.log('Intent: ' + args.intent);
     var locationEntity = builder.EntityRecognizer.findEntity(args.entities, 'Locations');
-    if (locationEntity){
-        console.log('->' + locationEntity.entity)
+    if (locationEntity)
         session.userData.locationType = getLocationType('' + locationEntity.entity);
-    }
-        
 
     switch (args.intent) {
         case 'locations-near':
@@ -66,10 +57,8 @@ const secondStep = (session, args) => {
                         var tarjetas = LocationsToHeroCards(value, builder, session);
                         var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
                         session.send(msj);
-                    } else {
+                    } else
                         session.send('No se encontraron registros');
-                    }
-
                 },
                 function (reason) {
                     console.error('Something went wrong', reason);
@@ -87,30 +76,24 @@ const secondStep = (session, args) => {
                             var msj = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(tarjetas);
                             session.send(msj);
                         } else {
-                            //session.send(`No se encontraron ${locationEntity.entity}`);
                             session.send('No se encontraron registros');
                         }
                     } else {
                         session.send('No se encontraron registros');
                     }
-
                 },
                 function (reason) {
                     console.error('Something went wrong', reason);
-                }
-                );
+                });
             break;
-        default:
-            //var name = session.message.user ? session.message.user.name : null;
-            //session.send(args.entities[0].entity);
 
+        default:
             var fulfillmentEntities = builder.EntityRecognizer.findAllEntities(args.entities, 'fulfillment');
             if (fulfillmentEntities.length != 0) {
                 fulfillmentEntities.forEach(function (element) {
                     session.send(element.entity);
                 });
             }
-
             break;
     }
 }
@@ -120,29 +103,21 @@ const getDefaultIntent = (session) => {
     return new builder.IntentDialog({ recognizers: [recognizer] })
         .onDefault((session, args) => {
 
-            //console.log('Cache OUT: ' + JSON.stringify(middleware.cache.get(session.message.user.id), 2, null));
-
+            // Set tyoing mode to interface that support that
             session.sendTyping();
+            
+            // We get channelId and userID
             const channelId = session.message.address.channelId;
             const userId = session.message.user.id;
-        
-            console.log(channelId);console.log(userId);
-            console.log('Cache 2: ' + JSON.stringify(middleware.cache.get(userId), 2, null));
-
-            console.log('CACHE INFO: ' + JSON.stringify(middleware.cache.data, null, 2));
-
+            
+            // If the message is going to the directline channel by dashbot send message, else we send to bot
             if (channelId === 'directline' && userId === 'dashbot-direct-line') {
-            //if (channelId === 'emulator' && userId === 'default-user') {
                 sendMessage(session);
-                //getDefaultIntent();
             } else {
                 const cacheData = middleware.cache.get(userId) || { paused: false };
-                console.log(cacheData);
                 if (!cacheData.paused)
-                    zeroStep(session, args, firstStep);
+                    firstStep(session, args, secondStep);
             }
-
-            //zeroStep(session, args, firstStep);
         })
 }
 
@@ -254,25 +229,3 @@ var LocationsToHeroCards = (locations, builder, session) => {
 }
 
 module.exports = { setDialogs: setDialogs };
-
-
-const getWaterfall = () => [firstStepX, finalStepX];
-
-const firstStepX = (session, args, next) => {
-    const channelId = session.message.address.channelId;
-    const userId = session.message.user.id;
-
-    if (channelId === 'directline' && userId === 'dashbot-direct-line') { //dashbot-direct-line
-        sendMessage(session);
-        next();
-    } else {
-        const cacheData = middleware.cache.get(userId) || { paused: false };
-        if (!cacheData.paused)
-            session.send('Estamos realizando mejoras, pronto volveremos.');
-        else
-            next();
-    }
-};
-const finalStepX = (session, args, next) => {
-    session.endDialog();
-};
